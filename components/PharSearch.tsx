@@ -68,9 +68,10 @@ export const loadPharmacyData = async (searchKeyword: string = '') => {
         const distance = calculateDistance(userlati, userlong, parseFloat(pharmacy.wgs84Lat), parseFloat(pharmacy.wgs84Lon));
         const openKey = `dutytime${currentDayIndex}s`;
         const closeKey = `dutytime${currentDayIndex}c`;
-        const openTime = parseInt(pharmacy[openKey], 10) || 0;
-        const closeTime = parseInt(pharmacy[closeKey], 10) || 2400;
-        const isOpen = currentTime >= openTime && currentTime <= closeTime;
+    
+        const openTime = pharmacy[openKey] ? parseInt(pharmacy[openKey], 10) : -1;
+        const closeTime = pharmacy[closeKey] ? parseInt(pharmacy[closeKey], 10) : 2400;
+        const isOpen = openTime === -1 ? false : (currentTime >= openTime && currentTime <= closeTime);
 
         return {
             id: pharmacy.hpid,
