@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.d2mension.PharMap"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,6 +27,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "76c2cf47-c098-4c6a-9110-a0dae29b51ca"
+      }
+    },
+    "plugins": [
+      "expo-build-properties"
+    ]
   }
 }

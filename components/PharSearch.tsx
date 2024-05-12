@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
-import SeoulPharmacy from '../SeoulPharmacy.json';
+import ChungBukParamacy from '../ChungBukParamacy.json';
 
 export interface Pharmacy {
   id: string;
@@ -42,30 +42,30 @@ export const loadPharmacyData = async (searchKeyword: string = '') => {
     }
 
     let location = await Location.getCurrentPositionAsync({})
-    const userlati = 37.478320;
-    const userlong = 126.950598;
+    const userlati = 36.63243;
+    const userlong = 127.4901;
     //const userlati = location.coords.latitude;
     //const userlong = location.coords.longitude;
     const currentDayIndex = getCurrentDayIndex();
     const currentTime = getCurrentTime();
 
-    let pharmacies = SeoulPharmacy.DATA;
+    let pharmacies = ChungBukParamacy.DATA;
 
     // 검색 키워드가 있는 경우, 키워드 검색 로직 수행
     if (searchKeyword.trim()) {
         pharmacies = pharmacies.filter(pharmacy =>
-            pharmacy.dutyname.includes(searchKeyword)
+            pharmacy.dutyName.includes(searchKeyword)
         );
     }
 
     // 현재 위치 기준 +- 0.0025 범위 내 데이터 또는 검색된 데이터에 대한 처리
     const filteredAndProcessedPharmacies = pharmacies.filter(pharmacy => {
-        const latitude = parseFloat(pharmacy.wgs84lat);
-        const longitude = parseFloat(pharmacy.wgs84lon);
+        const latitude = parseFloat(pharmacy.wgs84Lat);
+        const longitude = parseFloat(pharmacy.wgs84Lon);
         return latitude >= userlati - 0.0025 && latitude <= userlati + 0.0025 &&
                longitude >= userlong - 0.0025 && longitude <= userlong + 0.0025;
     }).map(pharmacy => {
-        const distance = calculateDistance(userlati, userlong, parseFloat(pharmacy.wgs84lat), parseFloat(pharmacy.wgs84lon));
+        const distance = calculateDistance(userlati, userlong, parseFloat(pharmacy.wgs84Lat), parseFloat(pharmacy.wgs84Lon));
         const openKey = `dutytime${currentDayIndex}s`;
         const closeKey = `dutytime${currentDayIndex}c`;
         const openTime = parseInt(pharmacy[openKey], 10) || 0;
@@ -74,11 +74,11 @@ export const loadPharmacyData = async (searchKeyword: string = '') => {
 
         return {
             id: pharmacy.hpid,
-            name: pharmacy.dutyname,
-            phone: pharmacy.dutytel1,
-            address: pharmacy.dutyaddr,
-            latitude: parseFloat(pharmacy.wgs84lat),
-            longitude: parseFloat(pharmacy.wgs84lon),
+            name: pharmacy.dutyName,
+            phone: pharmacy.dutyTel1,
+            address: pharmacy.dutyAddr,
+            latitude: parseFloat(pharmacy.wgs84Lat),
+            longitude: parseFloat(pharmacy.wgs84Lon),
             distance,
             dutyopen: openTime.toString(),
             dutyclose: closeTime.toString(),

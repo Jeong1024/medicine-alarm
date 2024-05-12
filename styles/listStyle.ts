@@ -31,7 +31,6 @@ export const listStyles = StyleSheet.create({
         fontWeight: "600",
         textAlign: "center",
         fontSize: 20,
-
     },
     name: {
         fontSize: 18,
