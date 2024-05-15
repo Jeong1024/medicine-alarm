@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import ChungBukParamacy from '../ChungBukParamacy.json';
+import ChungNamParamacy from '../ChungNamParamacy.json';
 
 export interface Pharmacy {
   id: string;
@@ -42,14 +43,14 @@ export const loadPharmacyData = async (searchKeyword: string = '') => {
     }
 
     let location = await Location.getCurrentPositionAsync({})
-    const userlati = 36.63243;
-    const userlong = 127.4901;
-    //const userlati = location.coords.latitude;
-    //const userlong = location.coords.longitude;
+    // const userlati = 36.63243;
+    // const userlong = 127.4901;
+    const userlati = location.coords.latitude;
+    const userlong = location.coords.longitude;
     const currentDayIndex = getCurrentDayIndex();
     const currentTime = getCurrentTime();
 
-    let pharmacies = ChungBukParamacy.DATA;
+    let pharmacies = ChungNamParamacy.DATA;
 
     // 검색 키워드가 있는 경우, 키워드 검색 로직 수행
     if (searchKeyword.trim()) {
@@ -58,16 +59,17 @@ export const loadPharmacyData = async (searchKeyword: string = '') => {
         );
     }
 
-    // 현재 위치 기준 +- 0.0025 범위 내 데이터 또는 검색된 데이터에 대한 처리
+    const searchRange = 0.02
+    // 현재 위치 기준 +- 범위 내 데이터 또는 검색된 데이터에 대한 처리
     const filteredAndProcessedPharmacies = pharmacies.filter(pharmacy => {
         const latitude = parseFloat(pharmacy.wgs84Lat);
         const longitude = parseFloat(pharmacy.wgs84Lon);
-        return latitude >= userlati - 0.0025 && latitude <= userlati + 0.0025 &&
-               longitude >= userlong - 0.0025 && longitude <= userlong + 0.0025;
+        return latitude >= userlati - searchRange && latitude <= userlati + searchRange &&
+               longitude >= userlong - searchRange && longitude <= userlong + searchRange;
     }).map(pharmacy => {
         const distance = calculateDistance(userlati, userlong, parseFloat(pharmacy.wgs84Lat), parseFloat(pharmacy.wgs84Lon));
-        const openKey = `dutytime${currentDayIndex}s`;
-        const closeKey = `dutytime${currentDayIndex}c`;
+        const openKey = `dutyTime${currentDayIndex}s`;
+        const closeKey = `dutyTime${currentDayIndex}c`;
     
         const openTime = pharmacy[openKey] ? parseInt(pharmacy[openKey], 10) : -1;
         const closeTime = pharmacy[closeKey] ? parseInt(pharmacy[closeKey], 10) : 2400;

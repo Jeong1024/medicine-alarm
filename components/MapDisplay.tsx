@@ -33,7 +33,7 @@ const MapDisplay = () => {
         fetchData();
     }, []);
 
-  const { width: userWidth, height: userHeight } = Dimensions.get("window");
+  // const { width: userWidth, height: userHeight } = Dimensions.get("window");
   
   useEffect(() => {
     (async () => {
@@ -47,8 +47,10 @@ const MapDisplay = () => {
 
       let currentLocation = await Location.getCurrentPositionAsync({});
       setLocation({
-        latitude: currentLocation.coords.latitude,
-        longitude: currentLocation.coords.longitude,
+        coords: {
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+        },
         latitudeDelta: 0.008, // zoom 정도
         longitudeDelta: 0.008,
       });
@@ -61,8 +63,8 @@ const MapDisplay = () => {
   } 
 
   // 시뮬레이션을 위해 임의 설정한 좌표 
-  const userlati = 36.63243;
-  const userlong = 127.4901;
+  // const userlati = 36.63243;
+  // const userlong = 127.4901;
   
   return (
     <MapView
@@ -71,10 +73,10 @@ const MapDisplay = () => {
       showsMyLocationButton={true}
       // mapPadding={{top: userHeight-240, right: 20, bottom: 0, left: 0}}
       initialRegion={{
-        // latitude: location.coords.latitude,
-        // longitude: location.coords.longitude, 
-        latitude: userlati, 
-        longitude: userlong,
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude, 
+        // latitude: userlati, 
+        // longitude: userlong,
         latitudeDelta: 0.008,
         longitudeDelta: 0.008,
       }}
@@ -101,17 +103,11 @@ const MapDisplay = () => {
       ))}
       <Marker
         coordinate={{
-          //latitude: location.coords.latitude,
-          //longitude: location.coords.longitude,
-          latitude: userlati,
-          longitude: userlong,
-        }}
-        title={"현재 위치"}>
-        <Image
-          source={{uri: 'https://pngimg.com/uploads/pin/pin_PNG61.png'}} // 현재 위치 이미지, 추후 수정 
-          style={{width: 20, height: 40}} // 이미지 크기 조정
-        />
-      </Marker>
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          // latitude: userlati,
+          // longitude: userlong,
+        }} />
     </MapView>
   );
 };

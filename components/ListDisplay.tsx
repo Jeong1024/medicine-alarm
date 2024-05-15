@@ -61,8 +61,8 @@ const ListDisplay = () => {
                                 <Text>전화번호: {pharmacy.phone.toString()}</Text>
                                 <Text>주소: {pharmacy.address}</Text>
                                 <Text style={{ color: pharmacy.dutyopen === '-1' ? 'red' : 'black', 
-                                                fontWeight: pharmacy.dutyopen === '-1' ? "700" : "100"}}>
-                                    {pharmacy.dutyopen === '-1' ? '금일 휴무' : '영업 시간:' +  pharmacy.dutyopen + '~' + pharmacy.dutyclose}
+                                                fontWeight: pharmacy.dutyopen === '-1' ? "700" : "400"}}>
+                                    {pharmacy.dutyopen === '-1' ? '금일 휴무' : '영업 시간: ' +  pharmacy.dutyopen + '~' + pharmacy.dutyclose}
                                 </Text>
                                 <Text style={pharmacy.isOpen ? listStyles.openStat : listStyles.closeStat}>
                                     {pharmacy.isOpen ? '영업 중' : '영업 종료'}
