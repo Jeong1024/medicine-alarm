@@ -15,4 +15,17 @@ export const buttonStyles = StyleSheet.create({
       marginVertical: 10,
       fontSize: 20,
     },
+    favButton: {
+      position: "absolute",
+      borderRadius: 5,
+      zIndex: 1000,
+      left: 15,
+      bottom: 20,
+      backgroundColor: "#0268E0",
+      padding: 10,
+    },
+    favButtonFont: {
+      color: "#ffffff",
+      fontWeight: "600",
+    }
   });

@@ -59,7 +59,7 @@ export const loadPharmacyData = async (searchKeyword: string = '') => {
         );
     }
 
-    const searchRange = 0.02
+    const searchRange = 0.005;
     // 현재 위치 기준 +- 범위 내 데이터 또는 검색된 데이터에 대한 처리
     const filteredAndProcessedPharmacies = pharmacies.filter(pharmacy => {
         const latitude = parseFloat(pharmacy.wgs84Lat);
