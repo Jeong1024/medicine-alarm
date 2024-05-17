@@ -7,9 +7,11 @@ import Navigation from './components/Navigation';
 import ListDisplay from './components/ListDisplay';
 import { styles } from './styles/appStyle';
 
+
 const App = () => {
   const [viewMode, setViewMode] = useState('map'); // 누르는 버튼에 따라 값을 다르게 하여 다른 컴포넌트 호출
   const [isGranted, setIsgranted] = useState(false); 
+  const [selectedPharmacy, setSelectedPharmacy] = useState(null);
 
   useEffect(() => {
     const requestGrant = async () => {
@@ -26,15 +28,28 @@ const App = () => {
     requestGrant(); 
   }, []); 
   
-      
+  const handlePharmacySelect = (pharmacy) => {
+    setSelectedPharmacy(pharmacy);
+    setViewMode('map');
+  };
+
+  const handleBackToList = () => {
+    setViewMode('list');
+    setSelectedPharmacy(null);
+  };
+
   return (
-    <View style={styles.container} >
+    <View style={styles.container}>
       <StatusBar />
       <View style={styles.buttonContainer}>
         <MapButton title="지도로 보기" onPress={() => setViewMode('map')} />
         <MapButton title="목록으로 보기" onPress={() => setViewMode('list')} />
       </View>
-        {viewMode === 'map' ? <MapDisplay /> : <ListDisplay />}
+      {viewMode === 'map' ? (
+        <MapDisplay selectedPharmacy={selectedPharmacy} onBack={handleBackToList} />
+      ) : (
+        <ListDisplay onPharmacySelect={handlePharmacySelect} />
+      )}
       <Navigation />
     </View>
   );

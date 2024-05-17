@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { listStyles } from '../styles/listStyle';
 
-const ListDisplay = () => {
+const ListDisplay = ({ onPharmacySelect }) => {
     const [isLoading, setIsLoading] = useState(true); // 로딩 상태
     const [searchQuery, setSearchQuery] = useState(''); // 매개변수로 전달할 검색어
     const [favorites, setFavorites] = useState({});
@@ -55,7 +55,11 @@ const ListDisplay = () => {
                     <Text>검색 결과가 없습니다.</Text>
                 ) : (
                     globalPharmacyData.map((pharmacy: Pharmacy) => (
-                        <View key={pharmacy.id} style={listStyles.pharmacy}>
+                        <TouchableOpacity
+                            key={pharmacy.id}
+                            style={listStyles.pharmacy}
+                            onPress={() => onPharmacySelect(pharmacy)}
+                        >
                             <View>
                                 <Text style={listStyles.name}>{pharmacy.name}</Text>
                                 <Text>전화번호: {pharmacy.phone.toString()}</Text>
@@ -75,7 +79,7 @@ const ListDisplay = () => {
                                     color={favorites[pharmacy.id] ? 'gold' : 'grey'}
                                 />
                             </TouchableOpacity>
-                        </View>
+                        </TouchableOpacity>
                     ))
                 )}
             </ScrollView>

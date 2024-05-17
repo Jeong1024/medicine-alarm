@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, Image, Dimensions, TouchableOpacity, Modal, Linking } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -9,13 +9,12 @@ import { modalStyles } from '../styles/modalStyle';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
-const MapDisplay = () => {
+const MapDisplay = ({ selectedPharmacy, onBack }) => {
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState('');
-  const [isLoading, setIsLoading] = useState(true); 
   const [favorites, setFavorites] = useState({});
   const [showFavorites, setShowFavorites] = useState(false);
-  const [selectedPharmacy, setSelectedPharmacy] = useState(null);
+  const [currentPharmacy, setCurrentPharmacy] = useState(selectedPharmacy);
+  const mapRef = useRef(null);
 
   useEffect(() => {
     // 즐겨찾기 로드
@@ -32,7 +31,6 @@ const MapDisplay = () => {
     useEffect(() => {
         async function fetchData() {
             await loadPharmacyData(); // PharSearch로부터 데이터 로딩
-            setIsLoading(false); 
         }
         
         fetchData();
@@ -62,6 +60,20 @@ const MapDisplay = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    if (selectedPharmacy) {
+      setCurrentPharmacy(selectedPharmacy); 
+      if (mapRef.current && currentPharmacy) {
+        mapRef.current.animateToRegion({
+          latitude: currentPharmacy.latitude,
+          longitude: currentPharmacy.longitude,
+          latitudeDelta: 0.008,
+          longitudeDelta: 0.008,
+        }, 1000); // 1초 동안 애니메이션
+      }
+    }
+  }, [selectedPharmacy]);
+
   const toggleFavorite = async (pharmacyId) => {
     const newFavorites = { ...favorites };
     if (newFavorites[pharmacyId]) {
@@ -71,6 +83,19 @@ const MapDisplay = () => {
     }
     setFavorites(newFavorites);
     await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
+  };
+
+  const handleMarkerPress = (pharmacy) => {
+    setCurrentPharmacy(pharmacy);
+   
+  };
+
+  const handleCloseModal = () => {
+    setCurrentPharmacy(null);
+  };
+
+  const handleCall = (phoneNumber) => {
+    Linking.openURL(`tel:${phoneNumber}`);
   };
 
   // 로딩 중  
@@ -86,21 +111,10 @@ const MapDisplay = () => {
   ? globalPharmacyData.filter(pharmacy => favorites[pharmacy.id])
   : globalPharmacyData;
 
-  const handleMarkerPress = (pharmacy) => {
-    setSelectedPharmacy(pharmacy);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedPharmacy(null);
-  };
-
-  const handleCall = (phoneNumber) => {
-    Linking.openURL(`tel:${phoneNumber}`);
-  };
-
   return (
     <View style={{ flex: 1 }}>
       <MapView
+        ref={mapRef}
         style={{ flex: 1, paddingTop: 120 }}
         showsUserLocation={true}
         showsMyLocationButton={true}
@@ -132,7 +146,6 @@ const MapDisplay = () => {
             />
           </Marker>     
         ))}
-        
       </MapView>
 
       <TouchableOpacity
@@ -144,7 +157,7 @@ const MapDisplay = () => {
         </Text>
       </TouchableOpacity>
 
-      {selectedPharmacy && (
+      {currentPharmacy && (
         <Modal
           animationType="slide"
           transparent={true}
