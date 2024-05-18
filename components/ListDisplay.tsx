@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, Modal, Linking } from 'react-native';
 import { loadPharmacyData, globalPharmacyData, Pharmacy } from './PharSearch'; // loadPharmacyData 함수와 globalPharmacyData를 import
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { listStyles } from '../styles/listStyle';
+import { modalStyles } from '../styles/modalStyle';
+import MapView, { Marker } from 'react-native-maps';
 
-const ListDisplay = ({ onPharmacySelect }) => {
+const ListDisplay = () => {
     const [isLoading, setIsLoading] = useState(true); // 로딩 상태
     const [searchQuery, setSearchQuery] = useState(''); // 매개변수로 전달할 검색어
     const [favorites, setFavorites] = useState({});
+    const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(null);
+
 
     useEffect (() => {
         loadFavorites();
@@ -37,6 +41,14 @@ const ListDisplay = ({ onPharmacySelect }) => {
         await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
     };
 
+    const handleCloseModal = () => {
+        setSelectedPharmacy(null);
+    };
+
+    const handleCall = (phoneNumber) => {
+        Linking.openURL(`tel:${phoneNumber}`);
+    };
+
     return (
         <View>
             <TextInput
@@ -55,10 +67,10 @@ const ListDisplay = ({ onPharmacySelect }) => {
                     <Text>검색 결과가 없습니다.</Text>
                 ) : (
                     globalPharmacyData.map((pharmacy: Pharmacy) => (
-                        <TouchableOpacity
-                            key={pharmacy.id}
-                            style={listStyles.pharmacy}
-                            onPress={() => onPharmacySelect(pharmacy)}
+                        <TouchableOpacity 
+                            key={pharmacy.id} 
+                            style={listStyles.pharmacy} 
+                            onPress={() => setSelectedPharmacy(pharmacy)}
                         >
                             <View>
                                 <Text style={listStyles.name}>{pharmacy.name}</Text>
@@ -83,6 +95,76 @@ const ListDisplay = ({ onPharmacySelect }) => {
                     ))
                 )}
             </ScrollView>
+
+            {selectedPharmacy && (
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={!!selectedPharmacy}
+                    onRequestClose={handleCloseModal}
+                >
+                    <View style={modalStyles.modalContainerList}>
+                        <View style={modalStyles.modalContentList}>
+                            <MapView
+                                style={modalStyles.mapView}
+                                initialRegion={{
+                                    latitude: selectedPharmacy.latitude,
+                                    longitude: selectedPharmacy.longitude,
+                                    latitudeDelta: 0.01,
+                                    longitudeDelta: 0.01,
+                                }}
+                            >
+                                <Marker
+                                    coordinate={{
+                                        latitude: selectedPharmacy.latitude,
+                                        longitude: selectedPharmacy.longitude,
+                                    }}
+                                    title={selectedPharmacy.name}
+                                />
+                            </MapView>
+
+                            
+                                <View >
+                                <TouchableOpacity
+                                    style={modalStyles.favoriteIcon}
+                                    onPress={() => toggleFavorite(selectedPharmacy.id)}
+                                >
+                                    <Icon
+                                    name={favorites[selectedPharmacy.id] ? 'star' : 'star-outline'}
+                                    size={24}
+                                    color={favorites[selectedPharmacy.id] ? 'gold' : 'grey'}
+                                    />
+                                </TouchableOpacity>
+                                
+                                <Text style={modalStyles.pharmacyName}>{selectedPharmacy.name}</Text>
+                                <Text>전화번호: {selectedPharmacy.phone}</Text>
+                                <Text>주소: {selectedPharmacy.address}</Text>
+                                {selectedPharmacy.isOpen && (
+                                    <Text>
+                                    영업 시간: {selectedPharmacy.dutyopen} ~ {selectedPharmacy.dutyclose}
+                                    </Text>
+                                )}
+                                <Text style={selectedPharmacy.isOpen ? modalStyles.openStat : modalStyles.closeStat}>
+                                    {selectedPharmacy.isOpen ? '영업 중' : '영업 종료'}
+                                </Text>
+                                
+                                <TouchableOpacity
+                                    style={modalStyles.callButton}
+                                    onPress={() => handleCall(selectedPharmacy.phone)}
+                                >
+                                    <Text style={modalStyles.callButtonText}>전화걸기</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={modalStyles.closeButton}
+                                    onPress={handleCloseModal}
+                                >
+                                    <Text style={modalStyles.closeButtonText}>닫기</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+            )}
         </View>
     );
 };

@@ -21,12 +21,36 @@ export const modalStyles = StyleSheet.create({
       justifyContent: 'flex-end',
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
+    modalContainerList: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
     modalContent: {
       backgroundColor: 'white',
       padding: 32,
+      minHeight: '30%',
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
+    },
+    modalContentList: {
+      backgroundColor: 'white',
+      padding: 32,
       minHeight: '30%', 
+      borderRadius: 20,
+    },
+    mapView: {
+      width: 300,
+      height: 300,
+      marginBottom: 10,
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: '100%',
+      marginBottom: 10,
     },
     pharmacyName: {
       fontSize: 20,
@@ -74,4 +98,7 @@ export const modalStyles = StyleSheet.create({
       padding: 10,
       zIndex: 1001,
     },
+    favoriteIconList: {
+      marginLeft: 10,
+    }
   });
