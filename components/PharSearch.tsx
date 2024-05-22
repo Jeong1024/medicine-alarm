@@ -18,31 +18,41 @@ export interface Pharmacy {
 
 export let globalPharmacyData: Pharmacy[] = [];
 
+// 거리 계산
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const dLat = lat2 - lat1;
   const dLon = lon2 - lon1;
   return Math.sqrt(dLat * dLat + dLon * dLon);
 };
 
+// 현재 날짜에 해당하는 값
+// 날짜에 따른 영업 시간 출력을 위함
 const getCurrentDayIndex = (): number => {
   const now = new Date();
   if (now.getDay() === 0) return 7;
   return now.getDay(); // Sunday - Saturday : 0 - 6
 };
 
+// 현재 시간
+// 영업 중 여부 확인
 const getCurrentTime = (): number => {
   const now = new Date();
   return now.getHours() * 100 + now.getMinutes(); // HHMM 형식
 };
 
+
 export const loadPharmacyData = async (searchKeyword: string = '') => {
+  /**
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       console.error('Permission to access location was denied');
       return;
     }
+    // 위치 정보는 App.tsx에서 받으므로 주석 처리, 이후 필요하면 사용 
+  */
 
     let location = await Location.getCurrentPositionAsync({})
+    // 시뮬레이션을 위해 임의 설정한 좌표 
     // const userlati = 36.63243;
     // const userlong = 127.4901;
     const userlati = location.coords.latitude;
@@ -101,7 +111,7 @@ const PharSearch = () => {
       loadPharmacyData();
     }, []);
     
-return null; // UI를 렌더링하지 않고 데이터 처리만 수행
+return null;
 };
 
 export default PharSearch;

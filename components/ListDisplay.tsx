@@ -10,27 +10,22 @@ import MapView, { Marker } from 'react-native-maps';
 const ListDisplay = () => {
     const [isLoading, setIsLoading] = useState(true); // 로딩 상태
     const [searchQuery, setSearchQuery] = useState(''); // 매개변수로 전달할 검색어
-    const [favorites, setFavorites] = useState({});
-    const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(null);
+    const [favorites, setFavorites] = useState({}); // 즐겨찾기 
+    const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(null); 
 
 
+    // 즐겨찾기 로딩
     useEffect (() => {
         loadFavorites();
     }, []);
-
 
     const loadFavorites = async () => {
         const favs = await AsyncStorage.getItem('favorites');
         setFavorites(favs ? JSON.parse(favs) : {});
     };
 
-    const handleSearch = async () => {
-        setIsLoading(true); // 검색 시작 시 로딩 상태로 변경
-        await loadPharmacyData(searchQuery); // 검색어를 매개변수로 전달하여 데이터 로딩
-        setIsLoading(false); // 데이터 로딩 완료 후 로딩 상태 해제
-    };
-
-    const toggleFavorite = async (pharmacyId) => {
+     // 즐겨찾기 토글
+     const toggleFavorite = async (pharmacyId) => {
         const newFavorites = { ...favorites };
         if (newFavorites[pharmacyId]) {
             delete newFavorites[pharmacyId];
@@ -41,10 +36,19 @@ const ListDisplay = () => {
         await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
     };
 
+    // 검색
+    const handleSearch = async () => {
+        setIsLoading(true); // 검색 시작 시 로딩 상태로 변경
+        await loadPharmacyData(searchQuery); // 검색어를 매개변수로 전달하여 데이터 로딩
+        setIsLoading(false); // 데이터 로딩 완료 후 로딩 상태 해제
+    };
+
+    // Modal 종료
     const handleCloseModal = () => {
         setSelectedPharmacy(null);
     };
 
+    // 전화걸기 
     const handleCall = (phoneNumber) => {
         Linking.openURL(`tel:${phoneNumber}`);
     };
@@ -65,7 +69,7 @@ const ListDisplay = () => {
             <ScrollView contentContainerStyle={listStyles.container}>
                 {globalPharmacyData.length === 0 ? (
                     <Text>검색 결과가 없습니다.</Text>
-                ) : (
+                ) : ( // 결과가 있는 경우 동적으로 객체 생성 
                     globalPharmacyData.map((pharmacy: Pharmacy) => (
                         <TouchableOpacity 
                             key={pharmacy.id} 
@@ -96,7 +100,9 @@ const ListDisplay = () => {
                 )}
             </ScrollView>
 
-            {selectedPharmacy && (
+            {selectedPharmacy && ( 
+                // 선택된 TouchableOpacity에 대해 Modal 생성
+                // MapView + Description
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -123,7 +129,6 @@ const ListDisplay = () => {
                                 />
                             </MapView>
 
-                            
                                 <View >
                                 <TouchableOpacity
                                     style={modalStyles.favoriteIcon}

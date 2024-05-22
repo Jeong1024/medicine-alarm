@@ -29,16 +29,25 @@ const MapDisplay = () => {
     loadFavorites();
   }, []);
 
-    useEffect(() => {
-        async function fetchData() {
-            await loadPharmacyData(); // PharSearch로부터 데이터 로딩
-            setIsLoading(false); 
-        }
-        
-        fetchData();
-    }, []);
+  const toggleFavorite = async (pharmacyId) => {
+    const newFavorites = { ...favorites };
+    if (newFavorites[pharmacyId]) {
+      delete newFavorites[pharmacyId];
+    } else {
+      newFavorites[pharmacyId] = true;
+    }
+    setFavorites(newFavorites);
+    await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
+  };
 
-  // const { width: userWidth, height: userHeight } = Dimensions.get("window");
+  useEffect(() => {
+      async function fetchData() {
+          await loadPharmacyData(); // PharSearch로부터 데이터 로딩
+          setIsLoading(false); 
+      }
+      
+      fetchData();
+  }, []);
   
   useEffect(() => {
     (async () => {
@@ -48,6 +57,7 @@ const MapDisplay = () => {
         setErrorMsg('Permission to access location was denied');
         return;
       }
+      // 위치 정보는 App.tsx에서 받으므로 주석 처리, 이후 필요하면 사용
       */
 
       let currentLocation = await Location.getCurrentPositionAsync({});
@@ -61,17 +71,6 @@ const MapDisplay = () => {
       });
     })();
   }, []);
-
-  const toggleFavorite = async (pharmacyId) => {
-    const newFavorites = { ...favorites };
-    if (newFavorites[pharmacyId]) {
-      delete newFavorites[pharmacyId];
-    } else {
-      newFavorites[pharmacyId] = true;
-    }
-    setFavorites(newFavorites);
-    await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
-  };
 
   // 로딩 중  
   if (!location) {
@@ -90,10 +89,12 @@ const MapDisplay = () => {
     setSelectedPharmacy(pharmacy);
   };
 
+  // Modal 종료
   const handleCloseModal = () => {
     setSelectedPharmacy(null);
   };
 
+  // 전화걸기 
   const handleCall = (phoneNumber) => {
     Linking.openURL(`tel:${phoneNumber}`);
   };
