@@ -1,3 +1,5 @@
+// 주변 약국 정보 로드
+
 import React, { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import ChungBukParamacy from '../ChungBukParamacy.json';

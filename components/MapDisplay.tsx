@@ -1,3 +1,5 @@
+// 주변 약국 정보 (지도)
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, Dimensions, TouchableOpacity, Modal, Linking } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
@@ -21,9 +23,7 @@ const MapDisplay = () => {
     // 즐겨찾기 로드
     const loadFavorites = async () => {
       const favs = await AsyncStorage.getItem('favorites');
-      if (favs) {
-        setFavorites(JSON.parse(favs));
-      }
+      setFavorites(favs ? JSON.parse(favs) : {});
     };
 
     loadFavorites();

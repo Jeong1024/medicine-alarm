@@ -1,3 +1,5 @@
+// 즐겨찾기 리스트용 약국 정보 로드
+
 import React, { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import ChungNamParamacy from '../ChungNamParamacy.json';
@@ -14,7 +16,7 @@ export interface Pharmacy {
   isOpen: boolean;
 }
 
-export let globalPharmacyData: Pharmacy[] = [];
+export let completePharmacyData: Pharmacy[] = [];
 
 
 // 현재 날짜에 해당하는 값
@@ -70,8 +72,8 @@ export const loadPharmacyData = async () => {
     }); 
 
     // 결과를 globalPharmacyData에 저장
-    globalPharmacyData.length = 0; // 이전 결과 비우기
-    globalPharmacyData.push(...ProcessedPharmacies);
+    completePharmacyData.length = 0; // 이전 결과 비우기
+    completePharmacyData.push(...ProcessedPharmacies);
 };
 
 const PharSearch = () => {

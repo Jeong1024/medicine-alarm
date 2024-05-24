@@ -1,3 +1,5 @@
+// 주변 약국 정보 (리스트)
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Modal, Linking } from 'react-native';
 import { loadPharmacyData, globalPharmacyData, Pharmacy } from './PharSearch'; // loadPharmacyData 함수와 globalPharmacyData를 import
@@ -20,10 +22,10 @@ const ListDisplay = () => {
     }, []);
 
     const loadFavorites = async () => {
-        const favs = await AsyncStorage.getItem('favorites');
+        const favs = await AsyncStorage.getItem('favorite_pharmacy');
         setFavorites(favs ? JSON.parse(favs) : {});
     };
-
+    
      // 즐겨찾기 토글
      const toggleFavorite = async (pharmacyId) => {
         const newFavorites = { ...favorites };
@@ -33,7 +35,7 @@ const ListDisplay = () => {
             newFavorites[pharmacyId] = true;
         }
         setFavorites(newFavorites);
-        await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
+        await AsyncStorage.setItem('favorite_pharmacy', JSON.stringify(newFavorites));
     };
 
     // 검색
