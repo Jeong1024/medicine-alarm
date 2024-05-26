@@ -40,6 +40,16 @@ export const modalStyles = StyleSheet.create({
       minHeight: '30%', 
       borderRadius: 20,
     },
+    modalContentCombine: {
+      position: "absolute",
+      bottom: 0,
+      backgroundColor: 'white',
+      padding: 32,
+      height: '70%',
+      width: '100%', 
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+    },
     mapView: {
       width: 300,
       height: 300,

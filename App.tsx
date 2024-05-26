@@ -7,6 +7,7 @@ import Navigation from './components/Navigation';
 import ListDisplay from './components/ListDisplay';
 import { styles } from './styles/appStyle';
 import PharmacyList from './components/PharmacyList';
+import MapList from './components/MapList';
 
 
 const App = () => {
@@ -29,15 +30,19 @@ const App = () => {
   }, []); 
   
       
+  /** 
+   * <MapButton title="지도로 보기" onPress={() => setViewMode('map')} />
+        <MapButton title="목록으로 보기" onPress={() => setViewMode('list')} />
+        <MapButton title="즐겨찾기 목록" onPress={() => setViewMode("favorite")} />
+   */
   return (
     <View style={styles.container} >
       <StatusBar />
       <View style={styles.buttonContainer}>
-        <MapButton title="지도로 보기" onPress={() => setViewMode('map')} />
-        <MapButton title="목록으로 보기" onPress={() => setViewMode('list')} />
+        <MapButton title="지도 리스트" onPress={() => setViewMode("map")} />
         <MapButton title="즐겨찾기 목록" onPress={() => setViewMode("favorite")} />
       </View>
-        {viewMode === 'map' ? <MapDisplay /> : viewMode === "list" ? <ListDisplay /> : <PharmacyList />}
+        {viewMode === 'map' ? <MapList /> : <PharmacyList />}
       <Navigation />
     </View>
   );

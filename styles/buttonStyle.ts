@@ -1,6 +1,7 @@
 import { StyleSheet, Dimensions } from "react-native";
 
 const { width: windWid, height: windHei } = Dimensions.get('window');
+const { width: screenWid, height: screenHei } = Dimensions.get("screen");
 
 export const buttonStyles = StyleSheet.create({
     button: {
@@ -20,12 +21,21 @@ export const buttonStyles = StyleSheet.create({
       borderRadius: 5,
       zIndex: 1000,
       left: 15,
-      bottom: 20,
+      top: 20,
       backgroundColor: "#0268E0",
       padding: 10,
     },
     favButtonFont: {
       color: "#ffffff",
       fontWeight: "600",
+    },
+    listButton: {
+      position: "absolute",
+      borderRadius: 5,
+      zIndex: 1000,
+      left: screenWid/2.3,
+      bottom: 20,
+      backgroundColor: "#AAAAAA",
+      padding: 10,
     }
   });
