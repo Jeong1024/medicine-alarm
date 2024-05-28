@@ -1,12 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, Modal, Linking } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, Dimensions, TouchableOpacity, Modal, Linking, ScrollView, TextInput } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { loadPharmacyData, globalPharmacyData } from './PharSearch';
-import { Modalize } from 'react-native-modalize';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { buttonStyles } from '../styles/buttonStyle';
 import { listStyles } from '../styles/listStyle';
@@ -17,13 +15,13 @@ const MapList = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [favorites, setFavorites] = useState({});
     const [showFavorites, setShowFavorites] = useState(false);
+    const [showList, setShowList] = useState(false);
     const [selectedPharmacy, setSelectedPharmacy] = useState(null);
-    const listModalRef = useRef(null);
 
     useEffect(() => {
         async function initLoad() {
             await loadPharmacyData();
-            const favs = await AsyncStorage.getItem('favorite_pharmacy');
+            const favs = await AsyncStorage.getItem('favorites_pharmacy');
             setFavorites(favs ? JSON.parse(favs) : {});
             let currentLocation = await Location.getCurrentPositionAsync({});
             setLocation({
@@ -45,23 +43,31 @@ const MapList = () => {
             newFavorites[pharmacyId] = true;
         }
         setFavorites(newFavorites);
-        await AsyncStorage.setItem('favorite_pharmacy', JSON.stringify(newFavorites));
+        await AsyncStorage.setItem('favorites_pharmacy', JSON.stringify(newFavorites));
     };
-
-    const filteredPharmacies = showFavorites
-    ? globalPharmacyData.filter(pharmacy => favorites[pharmacy.id])
-    : globalPharmacyData;
 
     const handleCloseModal = () => {
         setSelectedPharmacy(null);
     };
 
+    const handleCloseList = () => {
+        setShowList(false);
+    };
+
+    const handleCall = (phoneNumber) => {
+        Linking.openURL(`tel:${phoneNumber}`);
+      };
+
+    const filteredPharmacies = showFavorites
+    ? globalPharmacyData.filter(pharmacy => favorites[pharmacy.id])
+    : globalPharmacyData;
+    
     if (isLoading) {
         return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Loading...</Text></View>;
     }
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
             <MapView
                 style={{ flex: 1 }}
                 showsUserLocation={true}
@@ -91,20 +97,14 @@ const MapList = () => {
                 onPress={() => setShowFavorites(!showFavorites)}
             >
                 <Text style={buttonStyles.favButtonFont}>
-                    {showFavorites ? '전체 보기' : '즐겨찾기'}
+                {showFavorites ? '전체 보기' : '즐겨찾기'}
                 </Text>
             </TouchableOpacity>
 
+
             <TouchableOpacity
-                style={buttonStyles.listButton}
-                onPress={() => {
-                    if (listModalRef.current) {
-                        console.log("Open Modal");
-                        listModalRef.current?.open();
-                    } else {
-                        console.error("Modalize is not ready or missing open method.");
-                    }
-                }}
+                style={buttonStyles.listButton}  // Adjust or add this style in your buttonStyles
+                onPress={() => setShowList(!showList)}
             >
                 <Text>목록 보기</Text>
             </TouchableOpacity>
@@ -132,12 +132,16 @@ const MapList = () => {
                             <Text style={modalStyles.pharmacyName}>{selectedPharmacy.name}</Text>
                             <Text>전화번호: {selectedPharmacy.phone}</Text>
                             <Text>주소: {selectedPharmacy.address}</Text>
-                            <Text style={modalStyles.openStat}>
+                            <Text style={{ color: selectedPharmacy.dutyopen === '-1' ? 'red' : 'black', 
+                                            fontWeight: selectedPharmacy.dutyopen === '-1' ? "700" : "400"}}>
+                                            {selectedPharmacy.dutyopen === '-1' ? '금일 휴무' : '영업 시간: ' + selectedPharmacy.dutyopen + "~" + selectedPharmacy.dutyclose}
+                            </Text>
+                            <Text style={selectedPharmacy.isOpen ? modalStyles.openStat : modalStyles.closeStat}>
                                 {selectedPharmacy.isOpen ? '영업 중' : '영업 종료'}
                             </Text>
                             <TouchableOpacity
                                 style={modalStyles.callButton}
-                                onPress={() => Linking.openURL(`tel:${selectedPharmacy.phone}`)}
+                                onPress={handleCall}
                             >
                                 <Text style={modalStyles.callButtonText}>전화 걸기</Text>
                             </TouchableOpacity>
@@ -151,39 +155,49 @@ const MapList = () => {
                     </View>
                 </Modal>
             )}
-            
-            <Modalize
-                ref={listModalRef}
-                snapPoint={300}
-                modalHeight={600}
-                onOpened={() => console.log("Modalize is now fully opened and ready.")}
-            >
-                <ScrollView contentContainerStyle={modalStyles.modalContentCombine}>
-                    {globalPharmacyData.map((pharmacy, index) => (
-                        <TouchableOpacity key={index} style={listStyles.pharmacy}
-                            onPress={() => setSelectedPharmacy(pharmacy)}
-                        >
-                            <View>
-                                <Text style={listStyles.name}>{pharmacy.name}</Text>
-                                <Text>전화번호: {pharmacy.phone.toString()}</Text>
-                                <Text>주소: {pharmacy.address}</Text>
-                                <Text style={pharmacy.isOpen ? listStyles.openStat : listStyles.closeStat}>
-                                    {pharmacy.isOpen ? '영업 중' : '영업 종료'}
-                                </Text>
-                            </View>
-                            <TouchableOpacity onPress={() => toggleFavorite(pharmacy.id)}>
-                                <Icon
-                                    name={favorites[pharmacy.id] ? 'star' : 'star-outline'}
-                                    size={24}
-                                    color={favorites[pharmacy.id] ? 'gold' : 'grey'}
-                                />
-                            </TouchableOpacity>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-            </Modalize>
 
-        </GestureHandlerRootView>
+            {showList && (
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={showList}
+                    onRequestClose={() => setShowList(false)}
+                >
+                    <TouchableOpacity
+                        style={modalStyles.modalContainer}
+                        // activeOpacity={1}
+                        onPressOut={handleCloseList} >
+                        <ScrollView 
+                            contentContainerStyle={modalStyles.modalContentCombine}
+                            onStartShouldSetResponder={() => true}>
+                            {globalPharmacyData.map((pharmacy, index) => (
+                                <TouchableOpacity key={index} style={listStyles.pharmacy}>
+                                    <View>
+                                        <Text style={listStyles.name}>{pharmacy.name}</Text>
+                                        <Text>전화번호: {pharmacy.phone.toString()}</Text>
+                                        <Text>주소: {pharmacy.address}</Text>
+                                        <Text style={{ color: pharmacy.dutyopen === '-1' ? 'red' : 'black', 
+                                                        fontWeight: pharmacy.dutyopen === '-1' ? "700" : "400"}}>
+                                            {pharmacy.dutyopen === '-1' ? '금일 휴무' : '영업 시간: ' + pharmacy.dutyopen + "~" + pharmacy.dutyclose}
+                                        </Text>
+                                        <Text style={pharmacy.isOpen ? listStyles.openStat : listStyles.closeStat}>
+                                            {pharmacy.isOpen ? '영업 중' : '영업 종료'}
+                                        </Text>
+                                    </View>
+                                    <TouchableOpacity onPress={() => toggleFavorite(pharmacy.id)}>
+                                        <Icon
+                                            name={favorites[pharmacy.id] ? 'star' : 'star-outline'}
+                                            size={24}
+                                            color={favorites[pharmacy.id] ? 'gold' : 'grey'}
+                                        />
+                                    </TouchableOpacity>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </TouchableOpacity>
+                </Modal>
+            )}
+        </View>
     );
 };
 

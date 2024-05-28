@@ -41,14 +41,17 @@ export const modalStyles = StyleSheet.create({
       borderRadius: 20,
     },
     modalContentCombine: {
+      flex: 1,
       position: "absolute",
       bottom: 0,
       backgroundColor: 'white',
       padding: 32,
-      height: '70%',
+      height: "70%",
       width: '100%', 
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
+      flexGrow: 1,
+      //justifyContent: 'space-between',
     },
     mapView: {
       width: 300,
