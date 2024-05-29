@@ -20,7 +20,7 @@ const PharmacyList = () => {
     }, []);
 
     const loadFavorites = async () => {
-        const favs = await AsyncStorage.getItem('favorite_pharmacy');
+        const favs = await AsyncStorage.getItem('favorites_pharmacy');
         setFavorites(favs ? JSON.parse(favs) : {});
     };
 
@@ -35,8 +35,8 @@ const PharmacyList = () => {
     };
 
     return (
-        <View style={listStyles.container}>
-            <ScrollView contentContainerStyle={listStyles.container}>
+        <View >
+            <ScrollView contentContainerStyle={listStyles.favListContainer}>
                 {Object.values(favorites).length === 0 ? (
                     <Text>즐겨찾기된 약국이 없습니다.</Text>
                 ) : (

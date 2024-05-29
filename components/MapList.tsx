@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Dimensions, TouchableOpacity, Modal, Linking, ScrollView, TextInput } from 'react-native';
+import { View, Text, Image, Dimensions, TouchableOpacity, Modal, Linking, ScrollView, TouchableWithoutFeedback, TextInput } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,6 +17,7 @@ const MapList = () => {
     const [showFavorites, setShowFavorites] = useState(false);
     const [showList, setShowList] = useState(false);
     const [selectedPharmacy, setSelectedPharmacy] = useState(null);
+
 
     useEffect(() => {
         async function initLoad() {
@@ -93,10 +94,10 @@ const MapList = () => {
             </MapView>
 
             <TouchableOpacity
-                style={buttonStyles.favButton}
+                style={buttonStyles.favShowButton}
                 onPress={() => setShowFavorites(!showFavorites)}
             >
-                <Text style={buttonStyles.favButtonFont}>
+                <Text style={buttonStyles.favShowButtonFont}>
                 {showFavorites ? '전체 보기' : '즐겨찾기'}
                 </Text>
             </TouchableOpacity>
@@ -161,40 +162,43 @@ const MapList = () => {
                     animationType="slide"
                     transparent={true}
                     visible={showList}
-                    onRequestClose={() => setShowList(false)}
+                    onRequestClose={handleCloseList}
                 >
-                    <TouchableOpacity
-                        style={modalStyles.modalContainer}
-                        // activeOpacity={1}
-                        onPressOut={handleCloseList} >
-                        <ScrollView 
-                            contentContainerStyle={modalStyles.modalContentCombine}
-                            onStartShouldSetResponder={() => true}>
-                            {globalPharmacyData.map((pharmacy, index) => (
-                                <TouchableOpacity key={index} style={listStyles.pharmacy}>
-                                    <View>
-                                        <Text style={listStyles.name}>{pharmacy.name}</Text>
-                                        <Text>전화번호: {pharmacy.phone.toString()}</Text>
-                                        <Text>주소: {pharmacy.address}</Text>
-                                        <Text style={{ color: pharmacy.dutyopen === '-1' ? 'red' : 'black', 
-                                                        fontWeight: pharmacy.dutyopen === '-1' ? "700" : "400"}}>
-                                            {pharmacy.dutyopen === '-1' ? '금일 휴무' : '영업 시간: ' + pharmacy.dutyopen + "~" + pharmacy.dutyclose}
-                                        </Text>
-                                        <Text style={pharmacy.isOpen ? listStyles.openStat : listStyles.closeStat}>
-                                            {pharmacy.isOpen ? '영업 중' : '영업 종료'}
-                                        </Text>
-                                    </View>
-                                    <TouchableOpacity onPress={() => toggleFavorite(pharmacy.id)}>
-                                        <Icon
-                                            name={favorites[pharmacy.id] ? 'star' : 'star-outline'}
-                                            size={24}
-                                            color={favorites[pharmacy.id] ? 'gold' : 'grey'}
-                                        />
-                                    </TouchableOpacity>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                    </TouchableOpacity>
+                    <TouchableWithoutFeedback onPress={handleCloseList}>
+                        <View style={modalStyles.modalContainer}>
+                            <View style={modalStyles.modalContentCombine}>
+                                <ScrollView 
+                                    contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
+                                    onStartShouldSetResponder={() => true}>
+                                    {globalPharmacyData.map((pharmacy, index) => (
+                                        <TouchableOpacity key={index} style={listStyles.pharmacy}
+                                            onPress={() => setSelectedPharmacy(pharmacy)}
+                                        >
+                                            <View>
+                                                <Text style={listStyles.name}>{pharmacy.name}</Text>
+                                                <Text>전화번호: {pharmacy.phone.toString()}</Text>
+                                                <Text>주소: {pharmacy.address}</Text>
+                                                <Text style={{ color: pharmacy.dutyopen === '-1' ? 'red' : 'black', 
+                                                                fontWeight: pharmacy.dutyopen === '-1' ? "700" : "400"}}>
+                                                    {pharmacy.dutyopen === '-1' ? '금일 휴무' : '영업 시간: ' +  pharmacy.dutyclose}
+                                                </Text>
+                                                <Text style={pharmacy.isOpen ? listStyles.openStat : listStyles.closeStat}>
+                                                    {pharmacy.isOpen ? '영업 중' : '영업 종료'}
+                                                </Text>
+                                            </View>
+                                            <TouchableOpacity onPress={() => toggleFavorite(pharmacy.id)}>
+                                                <Icon
+                                                    name={favorites[pharmacy.id] ? 'star' : 'star-outline'}
+                                                    size={24}
+                                                    color={favorites[pharmacy.id] ? 'gold' : 'grey'}
+                                                />
+                                            </TouchableOpacity>
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </Modal>
             )}
         </View>

@@ -1,8 +1,18 @@
 import { StyleSheet } from "react-native";
 
+// 기존 컬러 코드
+const searchButtonColor = "#C2C96D";
+
+// 더 쨍한 버전
+// const searchButtonColor = "#ACD31E";
+
 export const listStyles = StyleSheet.create({
     container: {
         padding: 10,
+        paddingBottom: 100,
+    },
+    favListContainer: {
+        padding: 15,
     },
     pharmacy: {
         marginBottom: 10,
@@ -21,7 +31,7 @@ export const listStyles = StyleSheet.create({
         marginTop: 0,
     },
     searchBtn: {
-        backgroundColor: '#C2C96D',
+        backgroundColor: searchButtonColor,
         marginHorizontal: 10,
         padding: 10,
         borderRadius: 5,

@@ -35,7 +35,8 @@ const getCurrentTime = (): number => {
 };
 
 
-export const loadPharmacyData = async () => {
+
+export const loadPharmacyData = async (searchKeyword: string = '') => {
   /**
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -46,6 +47,13 @@ export const loadPharmacyData = async () => {
   */
 
     let pharmacies = ChungNamParamacy.DATA;
+
+    // 검색 키워드가 있는 경우, 키워드 검색 로직 수행
+    if (searchKeyword.trim()) {
+      pharmacies = pharmacies.filter(pharmacy =>
+          pharmacy.dutyName.includes(searchKeyword)
+      );
+    }
 
     const currentDayIndex = getCurrentDayIndex();
     const currentTime = getCurrentTime();
@@ -71,12 +79,12 @@ export const loadPharmacyData = async () => {
       };
     }); 
 
-    // 결과를 globalPharmacyData에 저장
+    // 결과를 completePharmacyData에 저장
     completePharmacyData.length = 0; // 이전 결과 비우기
     completePharmacyData.push(...ProcessedPharmacies);
 };
 
-const PharSearch = () => {
+const PharInfo = () => {
   const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
@@ -86,4 +94,4 @@ const PharSearch = () => {
 return null;
 };
 
-export default PharSearch;
+export default PharInfo;

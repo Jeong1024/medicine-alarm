@@ -1,5 +1,12 @@
 import { StyleSheet } from 'react-native';
 
+
+// 기존 컬러 코드
+// const callButtonColor = "#6D9BC8";
+
+// 더 쨍한 버전
+const callButtonColor = "#2E83FF"
+
 export const modalStyles = StyleSheet.create({
     favoritesButton: {
       position: 'absolute',
@@ -42,16 +49,17 @@ export const modalStyles = StyleSheet.create({
     },
     modalContentCombine: {
       flex: 1,
+      // flexWrap: "wrap",
       position: "absolute",
       bottom: 0,
       backgroundColor: 'white',
       padding: 32,
-      height: "70%",
+      height: "75%",
       width: '100%', 
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       flexGrow: 1,
-      //justifyContent: 'space-between',
+      justifyContent: 'space-between',
     },
     mapView: {
       width: 300,
@@ -68,7 +76,7 @@ export const modalStyles = StyleSheet.create({
     pharmacyName: {
       fontSize: 20,
       fontWeight: 'bold',
-      marginBottom: 10,
+      marginBottom: 5,
     },
     openStat: {
       color: 'green',
@@ -81,7 +89,7 @@ export const modalStyles = StyleSheet.create({
       fontSize: 18,
     },
     callButton: {
-      backgroundColor: 'blue',
+      backgroundColor: callButtonColor,
       padding: 10,
       borderRadius: 10,
       marginTop: 10,
@@ -106,12 +114,14 @@ export const modalStyles = StyleSheet.create({
     },
     favoriteIcon: {
       position: 'absolute',
-      top: 32,
-      right: 32,
+      top: 23,
+      right: 25,
       padding: 10,
       zIndex: 1001,
     },
     favoriteIconList: {
-      marginLeft: 10,
-    }
+      position: "absolute",
+      top: 0,
+      right: 0,
+    },
   });

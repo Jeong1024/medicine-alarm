@@ -3,6 +3,12 @@ import { StyleSheet, Dimensions } from "react-native";
 const { width: windWid, height: windHei } = Dimensions.get('window');
 const { width: screenWid, height: screenHei } = Dimensions.get("screen");
 
+// 기존 컬러 코드
+// const showButtonColor = "#6D9BC8";
+
+// 더 쨍한 버전
+const showButtonColor = "#2E83FF"
+
 export const buttonStyles = StyleSheet.create({
     button: {
       backgroundColor: '#DDDDDD',
@@ -16,16 +22,16 @@ export const buttonStyles = StyleSheet.create({
       marginVertical: 10,
       fontSize: 20,
     },
-    favButton: {
+    favShowButton: {
       position: "absolute",
       borderRadius: 5,
       zIndex: 1000,
       left: 15,
       top: 20,
-      backgroundColor: "#0268E0",
+      backgroundColor: showButtonColor,
       padding: 10,
     },
-    favButtonFont: {
+    favShowButtonFont: {
       color: "#ffffff",
       fontWeight: "600",
     },
