@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "PharMap",
-    "slug": "PharMap",
+    "name": "medicine-alarm",
+    "slug": "medicine-alarm",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,26 +11,25 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.d2mension.PharMap"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.d2mension.PharMap"
+      "package": "com.woojin_sim.medicinealarm",
+      "softwareKeyboardLayoutMode": "pan",
+      "windowSoftInputMode": "adjustResize"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "76c2cf47-c098-4c6a-9110-a0dae29b51ca"
+        "projectId": "93eeff37-3950-48e1-a50a-491a4e57e02b"
       }
     },
     "plugins": [
